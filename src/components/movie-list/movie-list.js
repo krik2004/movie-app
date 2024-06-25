@@ -5,20 +5,29 @@ import themovieDbService from '../../services/themoviedb-service.js'
 
 const test = new themovieDbService()
 
-test.getResource().then((b) => console.log('name:', b))
-
-const data = Array.from({
-  length: 23,
-}).map((_, i) => ({
-  title: `ant design part ${i}`,
-  avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=${i}`,
-  description: 'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-  content:
-    'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-}))
-
 export default class MovieList extends Component {
+  movieService = new themovieDbService()
+
+  constructor() {
+    super(), this.updateMovies()
+  }
+
+  state = {
+    movies: [
+    ],
+  }
+
+  updateMovies() {
+    this.movieService.getResource().then((data) => {
+      console.log('date:', data)
+      this.setState({ movies: data })
+         console.log('state:', this.state)
+    })
+  }
+
   render() {
+    const { movies } = this.state
+
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <List
@@ -33,7 +42,7 @@ export default class MovieList extends Component {
             position: 'bottom',
             align: 'center',
           }}
-          dataSource={data}
+          dataSource={movies}
           renderItem={(item) => (
             <List.Item>
               <MovieCard item={item} />
