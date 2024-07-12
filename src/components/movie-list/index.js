@@ -1,3 +1,3 @@
-import App1 from './movie-list'
+import MovieList from './movie-list'
 
-export default App1 
+export default MovieList 
