@@ -2,20 +2,20 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { List } from 'antd'
 import MovieCard from '../movie-card/movie-card'
-import themovieDbService from '../../services/themoviedb-service.js'
+// import themovieDbService  from '../../services/themoviedb-service.js'
 
 // const test = new themovieDbService()
 
 export default class MovieList extends Component {
-  movieService = new themovieDbService()
+  // movieService = new themovieDbService()
 
   handlePageChange = (page) => {
-    
     this.props.handlePageChange(page)
   }
 
   render() {
-    const { movies, totalResult, handlePageChange } = this.props
+    const { movies, totalResult, handlePageChange, handleRatingChange } = this.props
+    // console.log('movies', movies)
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <List
@@ -25,8 +25,7 @@ export default class MovieList extends Component {
           pagination={{
             showSizeChanger: false,
             onChange: (page) => {
-
-             this.handlePageChange(page)
+              this.handlePageChange(page)
             },
             // onChange: (page) => {
             //   console.log(page)
@@ -39,7 +38,7 @@ export default class MovieList extends Component {
           dataSource={movies}
           renderItem={(item) => (
             <List.Item>
-              <MovieCard item={item} />
+              <MovieCard item={item} handleRatingChange={handleRatingChange} />
             </List.Item>
           )}
           grid={{
@@ -57,23 +56,9 @@ export default class MovieList extends Component {
   }
 }
 MovieList.propTypes = {
-  movies: PropTypes.array.isRequired,
+  movies: PropTypes.array,
   totalResult: PropTypes.number.isRequired,
-  query: PropTypes.string.isRequired,
-  handlePageChange: PropTypes.func.isRequired,
+  query: PropTypes.string,
+  handlePageChange: PropTypes.func,
+  handleRatingChange: PropTypes.func,
 }
-
-
-  // constructor() {
-  //   super(), this.updateMovies()
-  // }
-
-  // state = {
-  //   movies: [],
-  // }
-
-  // updateMovies() {
-  //   this.movieService.getResource().then((data) => {
-  //     this.setState({ movies: data })
-  //   })
-  // }

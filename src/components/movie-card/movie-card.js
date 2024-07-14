@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Card, Row, Col, Tag } from 'antd'
+import { Card, Row, Col, Tag, Body } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Space, Spin } from 'antd'
 import { Image } from 'antd'
 import { Alert } from 'antd'
+import { Flex, Rate } from 'antd'
+
+import RatingCircle from '../rating-circle/rating-circle.js'
+import MovieGenreTags from '../movie-genreTags/movie-genreTags.js'
+import './movie-card.css'
+import { MovieContext } from '../../index.js'
 
 export default class MovieCard extends Component {
   constructor(props) {
@@ -14,7 +20,6 @@ export default class MovieCard extends Component {
       error: false,
     }
   }
-
   handleImageLoaded = () => {
     this.setState({ imageLoaded: true })
   }
@@ -31,49 +36,81 @@ export default class MovieCard extends Component {
 
   render() {
     const { format } = require('date-fns')
-    const { item } = this.props
+    const { item, handleRatingChange } = this.props
     const { error } = this.state
-
     const posterURL = 'https://image.tmdb.org/t/p/w500/'
     const errorMesage = error ? <Alert type="error" message="Error" banner /> : null
-    return (
-      <Card
-        style={{
-          border: '1px solid #e8e8e8',
-          // borderRadius: 0,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        }}
-      >
-        <Row style={{ height: '219px' }}>
-          <Col span={8}>
-            <Image
-              width={130}
-              src={`${posterURL}${item.poster_path}`}
-              alt={item.title}
-              preview={true}
-              onLoad={this.handleImageLoaded}
-              onError={(e) => {
-                this.handleError()
-              }}
-              placeholder={
-                <Space style={{ height: '219px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <Spin indicator={<LoadingOutlined style={{ color: 'grey' }} spin />} size="large" />
-                </Space>
-              }
-            />
-            {errorMesage}
-          </Col>
 
-          <Col span={16}>
-            <Card.Meta style={{ fontSize: '12px', margin: '8px' }} title={item.title} />
-            <div style={{ fontSize: '12px', color: '#827E7E', margin: '8px' }}>
-              {(item.release_date.length<4)?'unknown':format(new Date(item.release_date), 'MMMM d, yyyy')}
-            </div>
-            <Card.Meta style={{ fontSize: '12px', margin: '8px' }} description={this.shortenText(item.overview, 150)} />
-            <Tag style={{ fontSize: '12px', margin: '8px' }}>item.tag</Tag>
-          </Col>
-        </Row>
-      </Card>
+    return (
+      <MovieContext.Consumer>
+        {({ genres }) => (
+          <Card>
+            {/* <Card.Body style={{padding: '12px',}} > */}
+            <Row className="movie-card__image-row">
+              <Col span={8}>
+                <Image
+                  width={130}
+                  src={`${posterURL}${item.poster_path}`}
+                  alt={item.title}
+                  preview={true}
+                  onLoad={this.handleImageLoaded}
+                  onError={(e) => {
+                    this.handleError()
+                  }}
+                  placeholder={
+                    <Space className="movie-card__space-spin">
+                      <Spin indicator={<LoadingOutlined className="movie-card__loading-spinner" spin />} size="large" />
+                    </Space>
+                  }
+                />
+                {errorMesage}
+              </Col>
+              <Col span={16} className="movie-card__col-content-container">
+                {' '}
+                <Row justify="space-between">
+                  <Col>
+                    <Card.Meta
+                      className="movie-card__card-meta"
+                      style={{
+                        fontSize: '12px',
+                        marginLeft: '8px',
+                        marginTop: '8px',
+                        maxWidth: '200px',
+                        wordWrap: 'break-word',
+                        height: 'auto',
+                        marginBottom: '0px',
+                      }}
+                      title={item.title}
+                    />
+                  </Col>
+                  <Col>
+                    <RatingCircle rating={item.vote_average.toFixed(1)} />
+                  </Col>
+                </Row>
+                <div style={{ fontSize: '12px', color: '#827E7E', marginLeft: '8px', marginTop: '0px' }}>
+                  {item.release_date.length < 4 ? 'unknown' : format(new Date(item.release_date), 'MMMM d, yyyy')}
+                </div>
+                <MovieGenreTags genreIds={item.genre_ids} />
+                <Card.Meta
+                  style={{ fontSize: '12px', margin: '8px' }}
+                  description={this.shortenText(item.overview, 150)}
+                />
+                <div style={{ marginTop: 'auto', marginLeft: '8px' }}>
+                  <Rate
+                    className="movie-card__rate"
+                    defaultValue={item.rating}
+                    count={10}
+                    onChange={(value) => {
+                      handleRatingChange(item.id, value)
+                    }}
+                  />
+                </div>
+              </Col>
+            </Row>
+            {/* </Card.Body> */}
+          </Card>
+        )}
+      </MovieContext.Consumer>
     )
   }
 }
@@ -87,5 +124,10 @@ MovieCard.propTypes = {
     overview: PropTypes.string,
     poster_path: PropTypes.string,
     release_date: PropTypes.string,
+    vote_average: PropTypes.number,
+    id: PropTypes.number,
+    rating: PropTypes.number,
+    genre_ids: PropTypes.arrayOf(PropTypes.number).isRequired,
   }),
+  handleRatingChange: PropTypes.func,
 }

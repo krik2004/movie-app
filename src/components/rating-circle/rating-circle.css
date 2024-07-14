@@ -1,0 +1,14 @@
+.rating-circle {
+  width: 30px;
+  height: 30px;
+  border: 2px solid;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-nimber {
+  font-size: 26px;
+  font-weight: bold;
+}

@@ -1,0 +1,39 @@
+.movie-card {
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0px;
+}
+
+.movie-card__rate {
+  font-size: 12px;
+}
+.movie-card__image-row {
+  height: '200px';
+  padding: '0px';
+  margin: '0px';
+}
+.movie-card__space-spin {
+  height: '219px';
+  display: 'flex';
+  justify-content: center;
+  align-items: center;
+}
+
+.movie-card__loading-spinner {
+  color: grey;
+}
+
+.movie-card__col-content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.movie-card__card-meta {
+  font-size: 12px;
+  margin-left: 8px;
+  margin-top: 8px;
+  max-width: 200px;
+  word-wrap: break-word;
+  height: auto;
+  margin-bottom: 0px;
+}
