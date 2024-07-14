@@ -42,13 +42,13 @@ export default class MovieList extends Component {
             </List.Item>
           )}
           grid={{
-            gutter: 3,
+            gutter: 0,
             xs: 1,
-            sm: 4,
-            md: 2,
+            sm: 1,
+            md: 1,
             lg: 2,
             xl: 2,
-            xxl: 3,
+            xxl: 2,
           }}
         />
       </div>

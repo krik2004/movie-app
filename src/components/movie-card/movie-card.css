@@ -8,13 +8,13 @@
   font-size: 12px;
 }
 .movie-card__image-row {
-  height: '200px';
-  padding: '0px';
-  margin: '0px';
+  height: 200px;
+  padding: 0px;
+  margin: 0px;
 }
 .movie-card__space-spin {
-  height: '219px';
-  display: 'flex';
+  height: 219px;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -28,12 +28,30 @@
   flex-direction: column;
   justify-content: space-between;
 }
-.movie-card__card-meta {
+.movie-card__card-meta-title {
   font-size: 12px;
-  margin-left: 8px;
+  margin-left: 18px;
   margin-top: 8px;
   max-width: 200px;
   word-wrap: break-word;
   height: auto;
   margin-bottom: 0px;
+}
+
+
+
+
+@media (max-width: 992px) {
+
+.movie-card__image {
+    min-width: 60px;
+    max-width: 130px;
+  /* height: 9px; */
+}
+}
+@media screen and (max-width: 576px) {
+  .movie-card__col-content-container {
+    flex-direction: column; /* Размещаем элементы в колонку */
+    align-items:left; /* Центрируем элементы по центру */
+  }
 }

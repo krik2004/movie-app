@@ -46,10 +46,12 @@ export default class MovieCard extends Component {
         {({ genres }) => (
           <Card>
             {/* <Card.Body style={{padding: '12px',}} > */}
-            <Row className="movie-card__image-row">
+            <Row>
               <Col span={8}>
                 <Image
-                  width={130}
+                  className="movie-card__image"
+                  // style={{ width: '12px' }}
+                  // width={130}
                   src={`${posterURL}${item.poster_path}`}
                   alt={item.title}
                   preview={true}
@@ -68,20 +70,8 @@ export default class MovieCard extends Component {
               <Col span={16} className="movie-card__col-content-container">
                 {' '}
                 <Row justify="space-between">
-                  <Col>
-                    <Card.Meta
-                      className="movie-card__card-meta"
-                      style={{
-                        fontSize: '12px',
-                        marginLeft: '8px',
-                        marginTop: '8px',
-                        maxWidth: '200px',
-                        wordWrap: 'break-word',
-                        height: 'auto',
-                        marginBottom: '0px',
-                      }}
-                      title={item.title}
-                    />
+                  <Col style={{ marginLeft: '8px' }}>
+                    <Card.Meta className="movie-card__card-meta-title" title={item.title} />
                   </Col>
                   <Col>
                     <RatingCircle rating={item.vote_average.toFixed(1)} />
@@ -92,6 +82,7 @@ export default class MovieCard extends Component {
                 </div>
                 <MovieGenreTags genreIds={item.genre_ids} />
                 <Card.Meta
+                  className="movie-card__card-description"
                   style={{ fontSize: '12px', margin: '8px' }}
                   description={this.shortenText(item.overview, 150)}
                 />
