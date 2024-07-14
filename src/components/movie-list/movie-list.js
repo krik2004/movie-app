@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { List } from 'antd'
 import MovieCard from '../movie-card/movie-card'
+import './movie-list.css'
+
 // import themovieDbService  from '../../services/themoviedb-service.js'
 
 // const test = new themovieDbService()
@@ -17,19 +19,16 @@ export default class MovieList extends Component {
     const { movies, totalResult, handlePageChange, handleRatingChange } = this.props
     // console.log('movies', movies)
     return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div className="move-list__container">
         <List
+          className="move-list"
           itemLayout="horizontal"
           size="small"
-          style={{ maxWidth: '950px', align: 'center' }}
           pagination={{
             showSizeChanger: false,
             onChange: (page) => {
               this.handlePageChange(page)
             },
-            // onChange: (page) => {
-            //   console.log(page)
-            // },
             pageSize: 20,
             position: 'bottom',
             align: 'center',

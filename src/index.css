@@ -1,0 +1,13 @@
+.search-form {
+  max-width: 920px;
+  margin: auto;
+}
+.spinner__space-container {
+  height: 219px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.spinner__loadingOutLined {
+  color: grey;
+}

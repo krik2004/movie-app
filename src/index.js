@@ -14,7 +14,7 @@ import { Fragment } from 'react'
 import GuestSession from './services/guest-session.js'
 
 export const MovieContext = React.createContext()
-
+import './index.css'
 class App extends Component {
   movieService = new themovieDbService()
 
@@ -64,14 +64,12 @@ class App extends Component {
     try {
       this.setState({ loading: true })
       const moviesRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
-        
         return data.results
       })
       const totalResultRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
         return data.total_results
       })
-      this.setState({loading: false, moviesRated, totalResultRated }, 
-        () => {
+      this.setState({ loading: false, moviesRated, totalResultRated }, () => {
         console.log('this.state', this.state)
       })
     } catch (error) {
@@ -126,7 +124,6 @@ class App extends Component {
               indicator={{
                 size: 64,
               }}
-              // говнокод. нуждается в рефакторинге
               items={[
                 {
                   key: '1',
@@ -134,15 +131,7 @@ class App extends Component {
                   children: (
                     <Fragment>
                       {/* Поиск */}
-                      <Form
-                        name="trigger"
-                        style={{
-                          maxWidth: 920,
-                          margin: 'auto',
-                        }}
-                        layout="vertical"
-                        autoComplete="off"
-                      >
+                      <Form className="search-form" name="trigger" layout="vertical" autoComplete="off">
                         <Form.Item
                           hasFeedback
                           name="field_b"
@@ -164,15 +153,13 @@ class App extends Component {
 
                       {/* спинер */}
                       {this.state.loading && (
-                        <Space
-                          style={{
-                            height: '219px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Spin indicator={<LoadingOutlined style={{ color: 'grey' }} spin />} size="large" />
+                        <Space className="spinner__space-container">
+                          <Spin
+                            indicator={
+                              <LoadingOutlined className="spinner__loadingOutLined" spin />
+                            }
+                            size="large"
+                          />
                         </Space>
                       )}
                       {/* спинер */}

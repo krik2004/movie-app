@@ -77,16 +77,15 @@ export default class MovieCard extends Component {
                     <RatingCircle rating={item.vote_average.toFixed(1)} />
                   </Col>
                 </Row>
-                <div style={{ fontSize: '12px', color: '#827E7E', marginLeft: '8px', marginTop: '0px' }}>
+                <div className="date-info">
                   {item.release_date.length < 4 ? 'unknown' : format(new Date(item.release_date), 'MMMM d, yyyy')}
                 </div>
                 <MovieGenreTags genreIds={item.genre_ids} />
                 <Card.Meta
                   className="movie-card__card-description"
-                  style={{ fontSize: '12px', margin: '8px' }}
                   description={this.shortenText(item.overview, 150)}
                 />
-                <div style={{ marginTop: 'auto', marginLeft: '8px' }}>
+                <div className="rating-wrapper" >
                   <Rate
                     className="movie-card__rate"
                     defaultValue={item.rating}
