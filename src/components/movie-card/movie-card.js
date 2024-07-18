@@ -45,20 +45,15 @@ export default class MovieCard extends Component {
       <MovieContext.Consumer>
         {({ genres }) => (
           <Card>
-            {/* <Card.Body style={{padding: '12px',}} > */}
             <Row>
               <Col span={8}>
                 <Image
                   className="movie-card__image"
-                  // style={{ width: '12px' }}
-                  // width={130}
                   src={`${posterURL}${item.poster_path}`}
                   alt={item.title}
                   preview={true}
                   onLoad={this.handleImageLoaded}
-                  onError={(e) => {
-                    this.handleError()
-                  }}
+                  onError={(e) => this.handleError()}
                   placeholder={
                     <Space className="movie-card__space-spin">
                       <Spin indicator={<LoadingOutlined className="movie-card__loading-spinner" spin />} size="large" />
@@ -85,7 +80,7 @@ export default class MovieCard extends Component {
                   className="movie-card__card-description"
                   description={this.shortenText(item.overview, 150)}
                 />
-                <div className="rating-wrapper" >
+                <div className="rating-wrapper">
                   <Rate
                     className="movie-card__rate"
                     defaultValue={item.rating}
