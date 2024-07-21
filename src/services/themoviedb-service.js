@@ -7,6 +7,7 @@ export default class ThemovieDbService {
   // }
 
   onError = (error) => {}
+
   async fetchGuestSessionId() {
     const options = {
       method: 'GET',
@@ -53,14 +54,16 @@ export default class ThemovieDbService {
         return response.json()
       })
       .then((data) => {
+        // console.log(data)
         return data
       })
       .catch(this.onError)
     return res
   }
 
+
   async postRating(id, value, guestSessionId) {
-    console.log('guestSessionId ОБНОВЛЕН С APP:', guestSessionId)
+    // console.log('guestSessionId ОБНОВЛЕН С APP:', guestSessionId)
     const options = {
       method: 'POST',
       headers: {
@@ -71,15 +74,26 @@ export default class ThemovieDbService {
       },
       body: JSON.stringify({ value: value }),
     }
-    console.log(options, 'для фильма с ид', id, ' и рейтингом', value, 'this.guestSessionId', guestSessionId)
-    fetch(`https://api.themoviedb.org/3/movie/${id}/rating?guest_session_id=${guestSessionId}`, options)
-      .then((response) => response.json())
-      .then((response) => console.log(response))
-      .catch((err) => console.error(err))
+    // console.log(options, 'для фильма с ид', id, ' и рейтингом', value, 'this.guestSessionId', guestSessionId)
+ return fetch(`https://api.themoviedb.org/3/movie/${id}/rating?guest_session_id=${guestSessionId}`, options)
+   .then((response) => response.json())
+   .then((response) => {
+    //  console.log('ответ сервера по запросу на изменение рейтинга:', response)
+     if (response.success) {
+       return response // Возвращаем успешный ответ
+     } else {
+       throw new Error('Не удалось применить рейтинг')
+     }
+   })
+   .catch((err) => {
+     console.error(err)
+     throw err // Пробрасываем ошибку дальше
+   })
+
   }
 
   async getRatedMovies(page = 1, guestSessionId) {
-    console.log('guestSessionId стала TAB2:', guestSessionId)
+    // console.log('guestSessionId стала TAB2:', guestSessionId)
     const options = {
       method: 'GET',
       headers: {

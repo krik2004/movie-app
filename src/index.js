@@ -8,7 +8,7 @@ import { debounce } from 'lodash'
 import { Space, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 
-import { Card, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import { Fragment } from 'react'
 
 import GuestSession from './services/guest-session.js'
@@ -34,15 +34,33 @@ class App extends Component {
       this.setState({ loading: true })
       const query = this.state.query
       const movies = await this.movieService.getResource(query, page).then((data) => {
-        console.log(data.results)
         return data.results
       })
-      this.setState({ movies, loading: false })
+      this.setState({ movies, loading: false }, () => {
+        // console.log(this.state)
+      })
     } catch (error) {
       this.setState({ loading: false })
       console.error(error)
     }
   }
+  handleRatedPageChange = async (page) => {
+    const { guestSessionId } = this.state
+    try {
+      this.setState({ loading: true })
+      // const query = this.state.query
+      const moviesRated = await this.movieService.getRatedMovies(page, guestSessionId).then((data) => {
+        return data.results
+      })
+      this.setState({ moviesRated, loading: false }, () => {
+        // console.log(this.state)
+      })
+    } catch (error) {
+      this.setState({ loading: false })
+      console.error(error)
+    }
+  }
+
   debouncedSearch = debounce(async (query) => {
     try {
       const movies = await this.movieService.getResource(query).then((data) => {
@@ -52,7 +70,7 @@ class App extends Component {
         return data.total_results
       })
       this.setState({ movies, totalResult, query }, () => {
-        console.log(this.state)
+        // console.log(this.state)
       })
     } catch (error) {
       console.error(error)
@@ -60,7 +78,7 @@ class App extends Component {
   }, 1000)
 
   searchRatedMovies = async () => {
-    console.log('при переходе ', this.state.guestSessionId)
+    // console.log('вызвов searchRatedMovies')
     try {
       this.setState({ loading: true })
       const moviesRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
@@ -70,7 +88,7 @@ class App extends Component {
         return data.total_results
       })
       this.setState({ loading: false, moviesRated, totalResultRated }, () => {
-        console.log('this.state', this.state)
+        // console.log('this.state', this.state)
       })
     } catch (error) {
       console.error(error)
@@ -94,7 +112,7 @@ class App extends Component {
     try {
       const guestSessionId = await this.movieService.fetchGuestSessionId()
       this.setState({ guestSessionId }, () => {
-        console.log('при регистрации гость айди', this.state.guestSessionId)
+        // console.log('при регистрации гость айди', this.state.guestSessionId)
       })
     } catch (error) {
       console.error(error)
@@ -102,17 +120,16 @@ class App extends Component {
   }
 
   handleRatingChange = async (id, value) => {
-    // console.log('id', id, 'value', value)
     try {
       this.setState({ loading: true })
       await this.movieService.postRating(id, value, this.state.guestSessionId)
+      await this.searchRatedMovies()
       this.setState({ loading: false })
     } catch (error) {
       this.setState({ loading: false })
       console.error(error)
     }
   }
-
   render() {
     return (
       <div>
@@ -126,7 +143,7 @@ class App extends Component {
               }}
               items={[
                 {
-                  key: '1',
+                  key: 1,
                   label: 'Search',
                   children: (
                     <Fragment>
@@ -155,9 +172,7 @@ class App extends Component {
                       {this.state.loading && (
                         <Space className="spinner__space-container">
                           <Spin
-                            indicator={
-                              <LoadingOutlined className="spinner__loadingOutLined" spin />
-                            }
+                            indicator={<LoadingOutlined className="spinner__loadingOutLined" spin />}
                             size="large"
                           />
                         </Space>
@@ -167,24 +182,29 @@ class App extends Component {
                       {/* Список */}
                       <MovieList
                         movies={this.state.movies}
+                        moviesRated={this.state.moviesRated}
                         totalResult={this.state.totalResult}
                         query={this.state.query}
                         handlePageChange={this.handlePageChange}
                         handleRatingChange={this.handleRatingChange}
+                        searchRatedMovies={this.searchRatedMovies}
+                        className="movie-list"
                       />
                       {/* Cписок  */}
                     </Fragment>
                   ),
                 },
                 {
-                  key: '2',
+                  key: 2,
                   label: 'Rated',
                   children: (
                     <MovieList
                       movies={this.state.moviesRated}
+                      moviesRated={this.state.moviesRated}
                       totalResult={this.state.totalResultRated}
-                      handlePageChange={this.handlePageChange}
+                      handlePageChange={this.handleRatedPageChange}
                       handleRatingChange={this.handleRatingChange}
+                      searchRatedMovies={this.searchRatedMovies}
                     />
                   ),
                 },

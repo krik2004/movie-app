@@ -2,24 +2,27 @@ import React, { Component } from 'react'
 import './rating-circle.css'
 import PropTypes from 'prop-types'
 
+let colorClass = 'rating-circle'
+
 export default class RatingCircle extends Component {
   getBorderColor = () => {
     const { rating } = this.props
+
     switch (true) {
       case rating >= 7:
-        return '#66E900'
+        return colorClass + ' green'
       case rating >= 5:
-        return '#E9D100'
+        return colorClass + ' yellow'
       case rating >= 3:
-        return '#E97E00'
+        return colorClass + ' orange'
       default:
-        return 'red'
+        return colorClass + ' red'
     }
   }
   render() {
     const { rating } = this.props
     return (
-      <div className="rating-circle" style={{ borderColor: this.getBorderColor() }}>
+      <div className={this.getBorderColor()}>
         <span className="rating-number"> {rating} </span>
       </div>
     )

@@ -6,10 +6,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 8px;
 }
 
 .rating-nimber {
   font-size: 26px;
   font-weight: bold;
+}
+
+.red {
+  border-color: red;
+}
+
+.orange {
+  border-color: #e97e00;
+}
+
+.yellow {
+  border-color: #e9d100;
+}
+
+.green {
+  border-color: #66e900;
 }

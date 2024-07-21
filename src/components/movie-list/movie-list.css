@@ -1,8 +1,10 @@
-.move-list__container {
-  display: flex;
-  justify-content: center;
+@media (min-width: 720px) {
+  .move-list__container {
+    display: flex;
+    justify-content: center;
+  }
 }
+
 .move-list {
   max-width: 950px;
-
 }
