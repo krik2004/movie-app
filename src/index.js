@@ -1,23 +1,19 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import ReactDOM from 'react-dom/client'
-import MovieList from './components/movie-list'
 import { Offline, Online } from 'react-detect-offline'
-import { Alert, Form, Input } from 'antd'
-import themovieDbService from './services/themoviedb-service.js'
 import { debounce } from 'lodash'
-import { Space, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 
-import { Tabs } from 'antd'
-import { Fragment } from 'react'
+import { Form, Input, Space, Spin, Tabs } from 'antd'
 
+import themovieDbService from './services/themoviedb-service.js'
+import MovieList from './components/movie-list'
 import GuestSession from './services/guest-session.js'
 
 export const MovieContext = React.createContext()
 import './index.css'
 class App extends Component {
   movieService = new themovieDbService()
-
   state = {
     movies: [],
     totalResult: 1,
@@ -28,7 +24,6 @@ class App extends Component {
     guestSessionId: '',
     genres: [],
   }
-
   handlePageChange = async (page) => {
     try {
       this.setState({ loading: true })
@@ -36,9 +31,7 @@ class App extends Component {
       const movies = await this.movieService.getResource(query, page).then((data) => {
         return data.results
       })
-      this.setState({ movies, loading: false }, () => {
-        // console.log(this.state)
-      })
+      this.setState({ movies, loading: false }, () => {})
     } catch (error) {
       this.setState({ loading: false })
       console.error(error)
@@ -48,13 +41,10 @@ class App extends Component {
     const { guestSessionId } = this.state
     try {
       this.setState({ loading: true })
-      // const query = this.state.query
       const moviesRated = await this.movieService.getRatedMovies(page, guestSessionId).then((data) => {
         return data.results
       })
-      this.setState({ moviesRated, loading: false }, () => {
-        // console.log(this.state)
-      })
+      this.setState({ moviesRated, loading: false }, () => {})
     } catch (error) {
       this.setState({ loading: false })
       console.error(error)
@@ -69,16 +59,13 @@ class App extends Component {
       const totalResult = await this.movieService.getResource(query).then((data) => {
         return data.total_results
       })
-      this.setState({ movies, totalResult, query }, () => {
-        // console.log(this.state)
-      })
+      this.setState({ movies, totalResult, query }, () => {})
     } catch (error) {
       console.error(error)
     }
   }, 1000)
 
   searchRatedMovies = async () => {
-    // console.log('вызвов searchRatedMovies')
     try {
       this.setState({ loading: true })
       const moviesRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
@@ -87,9 +74,7 @@ class App extends Component {
       const totalResultRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
         return data.total_results
       })
-      this.setState({ loading: false, moviesRated, totalResultRated }, () => {
-        // console.log('this.state', this.state)
-      })
+      this.setState({ loading: false, moviesRated, totalResultRated }, () => {})
     } catch (error) {
       console.error(error)
     }
@@ -102,18 +87,13 @@ class App extends Component {
   async componentDidMount() {
     try {
       const genres = await themovieDbService.getGenres()
-      // console.log('жанры фильмов:', genres)
       this.setState({ genres })
     } catch (error) {
       console.error(error)
     }
-    // const service = new ThemovieDbService()
-
     try {
       const guestSessionId = await this.movieService.fetchGuestSessionId()
-      this.setState({ guestSessionId }, () => {
-        // console.log('при регистрации гость айди', this.state.guestSessionId)
-      })
+      this.setState({ guestSessionId }, () => {})
     } catch (error) {
       console.error(error)
     }
@@ -147,14 +127,12 @@ class App extends Component {
                   label: 'Search',
                   children: (
                     <Fragment>
-                      {/* Поиск */}
                       <Form className="search-form" name="trigger" layout="vertical" autoComplete="off">
                         <Form.Item
                           hasFeedback
                           name="field_b"
                           validateDebounce={1000}
                           onChange={(e) => {
-                            // this.handleSearch1(e)
                             this.handleSearch(e.target.value)
                           }}
                           rules={[
@@ -166,9 +144,6 @@ class App extends Component {
                           <Input placeholder="Type to search ..." />
                         </Form.Item>
                       </Form>
-                      {/* Поиск */}
-
-                      {/* спинер */}
                       {this.state.loading && (
                         <Space className="spinner__space-container">
                           <Spin
@@ -177,9 +152,6 @@ class App extends Component {
                           />
                         </Space>
                       )}
-                      {/* спинер */}
-
-                      {/* Список */}
                       <MovieList
                         movies={this.state.movies}
                         moviesRated={this.state.moviesRated}
@@ -190,7 +162,6 @@ class App extends Component {
                         searchRatedMovies={this.searchRatedMovies}
                         className="movie-list"
                       />
-                      {/* Cписок  */}
                     </Fragment>
                   ),
                 },

@@ -1,13 +1,5 @@
 export default class ThemovieDbService {
-  // #guestSessionId = '1'
-  // handleGuestSessionIdChange(guestSessionId) {
-  //   console.log('guestSessionId была:', this.#guestSessionId)
-  //   this.#guestSessionId = guestSessionId
-  //   console.log('guestSessionId стала текущая:', this.#guestSessionId)
-  // }
-
   onError = (error) => {}
-
   async fetchGuestSessionId() {
     const options = {
       method: 'GET',
@@ -22,7 +14,6 @@ export default class ThemovieDbService {
       .then((data) => data.guest_session_id)
       .catch((err) => console.error(err))
   }
-
   static getGenres = async () => {
     const options = {
       method: 'GET',
@@ -41,7 +32,6 @@ export default class ThemovieDbService {
       return []
     }
   }
-
   async getResource(req, page = 1) {
     const apiKey = '9e61f70586a2adfdc8d6cf29199b84da'
     const res = await fetch(
@@ -54,7 +44,6 @@ export default class ThemovieDbService {
         return response.json()
       })
       .then((data) => {
-        // console.log(data)
         return data
       })
       .catch(this.onError)
@@ -63,7 +52,6 @@ export default class ThemovieDbService {
 
 
   async postRating(id, value, guestSessionId) {
-    // console.log('guestSessionId ОБНОВЛЕН С APP:', guestSessionId)
     const options = {
       method: 'POST',
       headers: {
@@ -74,26 +62,23 @@ export default class ThemovieDbService {
       },
       body: JSON.stringify({ value: value }),
     }
-    // console.log(options, 'для фильма с ид', id, ' и рейтингом', value, 'this.guestSessionId', guestSessionId)
+
  return fetch(`https://api.themoviedb.org/3/movie/${id}/rating?guest_session_id=${guestSessionId}`, options)
    .then((response) => response.json())
    .then((response) => {
-    //  console.log('ответ сервера по запросу на изменение рейтинга:', response)
      if (response.success) {
-       return response // Возвращаем успешный ответ
+       return response
      } else {
        throw new Error('Не удалось применить рейтинг')
      }
    })
    .catch((err) => {
      console.error(err)
-     throw err // Пробрасываем ошибку дальше
+     throw err
    })
 
   }
-
   async getRatedMovies(page = 1, guestSessionId) {
-    // console.log('guestSessionId стала TAB2:', guestSessionId)
     const options = {
       method: 'GET',
       headers: {
@@ -107,7 +92,6 @@ export default class ThemovieDbService {
       options
     )
       .then((response) => response.json())
-      // .then((response) => console.log(response))
       .catch((err) => console.error(err))
     return res
   }

@@ -5,7 +5,7 @@
 }
 
 .movie-card__rate {
-  font-size: 12px;
+  font-size: 16px;
 }
 .movie-card__space-spin {
   height: 219px;
@@ -46,7 +46,6 @@
   .movie-card__image {
     min-width: 60px;
     max-width: 130px;
-    /* height: 9px; */
   } 
 }
 @media (max-width: 576px) {
@@ -108,10 +107,6 @@
 }
 
 @media (max-width: 720px) {
-  .card {
-    /* max-height: 245px; */
-    /* margin: 10px 16px 20px 16px; */
-  }
   .movie-card__image {
     max-height: 91px;
   }

@@ -7,7 +7,6 @@ let colorClass = 'rating-circle'
 export default class RatingCircle extends Component {
   getBorderColor = () => {
     const { rating } = this.props
-
     switch (true) {
       case rating >= 7:
         return colorClass + ' green'

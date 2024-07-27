@@ -4,26 +4,18 @@
   import MovieCard from '../movie-card/movie-card'
   import './movie-list.css'
 
-  // import themovieDbService  from '../../services/themoviedb-service.js'
-
-  // const test = new themovieDbService()
-
   export default class MovieList extends Component {
-    // movieService = new themovieDbService()
     handlePageChange = (page) => {
       this.props.handlePageChange(page)
     }
-
     render() {
       const {
         movies,
         totalResult,
-        handlePageChange,
         handleRatingChange,
         searchRatedMovies,
         moviesRated,
       } = this.props
-      // console.log('movies', movies)
       return (
         <div className="move-list__container">
           <List
@@ -33,7 +25,6 @@
               showSizeChanger: false,
               onChange: (page) => {
                 this.handlePageChange(page)
-                // searchRatedMovies()
               },
               pageSize: 20,
               position: 'bottom',

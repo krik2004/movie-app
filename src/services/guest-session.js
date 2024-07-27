@@ -6,8 +6,6 @@ export default class GuestSession extends Component {
   state = {
     guestSessionId: '',
   }
-
-
   render() {
     return null
   }
