@@ -11,7 +11,10 @@ export default class ThemovieDbService {
     }
     return fetch('https://api.themoviedb.org/3/authentication/guest_session/new', options)
       .then((response) => response.json())
-      .then((data) => data.guest_session_id)
+      .then((data) => {
+        data.guest_session_id
+        console.log(data.guest_session_id)
+      })
       .catch((err) => console.error(err))
   }
   static getGenres = async () => {
@@ -49,8 +52,6 @@ export default class ThemovieDbService {
       .catch(this.onError)
     return res
   }
-
-
   async postRating(id, value, guestSessionId) {
     const options = {
       method: 'POST',
@@ -60,24 +61,26 @@ export default class ThemovieDbService {
         Authorization:
           'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZTYxZjcwNTg2YTJhZGZkYzhkNmNmMjkxOTliODRkYSIsIm5iZiI6MTcyMDUzNDcxOC44ODYxNzMsInN1YiI6IjY2NzdjNTRhOGM4MGJhM2NjOWIwYjExMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.fn9u0AvzVserrxSoPcUVuuoj2iAM1aqhk1Dsve7gVIo',
       },
-      body: JSON.stringify({ value: value }),
+      body: JSON.stringify({ value: 1 }),
     }
 
- return fetch(`https://api.themoviedb.org/3/movie/${id}/rating?guest_session_id=${guestSessionId}`, options)
-   .then((response) => response.json())
-   .then((response) => {
-     if (response.success) {
-       return response
-     } else {
-       throw new Error('Не удалось применить рейтинг')
-     }
-   })
-   .catch((err) => {
-     console.error(err)
-     throw err
-   })
-
+    return fetch(`https://api.themoviedb.org/3/movie/${id}/rating?guest_session_id=${guestSessionId}`, options)
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          console.log(response)
+          console.log(guestSessionId)
+          return response
+        } else {
+          throw new Error('Не удалось применить рейтинг')
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        throw err
+      })
   }
+
   async getRatedMovies(page = 1, guestSessionId) {
     const options = {
       method: 'GET',

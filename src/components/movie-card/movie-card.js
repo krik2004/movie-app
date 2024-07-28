@@ -37,20 +37,24 @@ export default class MovieCard extends Component {
 
   render() {
     const { format } = require('date-fns')
-    const { item, handleRatingChange, moviesRated, searchRatedMovies } = this.props
+    const { item, handleRatingChange, moviesRated, searchRatedMovies, movieRatedLocal, currentTabisMain } = this.props
     const { error } = this.state
     const posterURL = 'https://image.tmdb.org/t/p/w500/'
     // console.log('moviesRated', moviesRated)
     // console.log(moviesRated)
     let currentUserRating
-    if (moviesRated !== undefined && moviesRated.length > 0) {
-      const foundMovie = moviesRated.find((ratedMovie) => ratedMovie.id === item.id)
-      if (foundMovie) {
-        currentUserRating = foundMovie.rating
-        // console.log('rating совпал: ', currentUserRating)
+    if (currentTabisMain) {
+      currentUserRating = movieRatedLocal
+    } else {
+      if (moviesRated !== undefined && moviesRated.length > 0) {
+        const foundMovie = moviesRated.find((ratedMovie) => ratedMovie.id === item.id)
+        if (foundMovie) {
+          currentUserRating = foundMovie.rating
+          // console.log('rating совпал: ', currentUserRating)
+        }
       }
     }
-    // console.log('для фильма: ', item.id)
+    // console.log('для фильма: ', item.id)}
     return (
       <MovieContext.Consumer>
         {({ genres }) => (
@@ -100,7 +104,7 @@ export default class MovieCard extends Component {
               <div className="card-rate-wrapper">
                 <Rate
                   className="movie-card__rate"
-                  value={currentUserRating || 0}
+                  value={currentUserRating}
                   count={10}
                   onChange={async (value) => {
                     await handleRatingChange(item.id, value)
@@ -127,9 +131,11 @@ MovieCard.propTypes = {
     vote_average: PropTypes.number,
     id: PropTypes.number,
     rating: PropTypes.number,
-    genre_ids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    genre_ids: PropTypes.arrayOf(PropTypes.number),
   }),
   handleRatingChange: PropTypes.func,
   moviesRated: PropTypes.array,
   searchRatedMovies: PropTypes.func,
+  movieRatedLocal: PropTypes.number,
+  currentTabisMain: PropTypes.bool,
 }

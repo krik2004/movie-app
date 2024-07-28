@@ -23,15 +23,28 @@ class App extends Component {
     loading: false,
     guestSessionId: '',
     genres: [],
+    moviesRatedLocal: {},
+    currentPage: 1,
+    currentTabisMain: true,
   }
+  currentTabToggle = () => {
+    this.setState((prevState) => ({ currentTabisMain: !prevState.currentTabisMain }))
+  }
+
   handlePageChange = async (page) => {
+    this.setState({ currentPage: page })
     try {
-      this.setState({ loading: true })
+      this.setState({ loading: true }, () => {
+        console.log(this.state.loading)
+      })
       const query = this.state.query
       const movies = await this.movieService.getResource(query, page).then((data) => {
         return data.results
       })
-      this.setState({ movies, loading: false }, () => {})
+      this.setState({ movies, loading: false }, () => {
+        console.log('новые фильмы пришли')
+        console.log(this.state.loading)
+      })
     } catch (error) {
       this.setState({ loading: false })
       console.error(error)
@@ -50,27 +63,34 @@ class App extends Component {
       console.error(error)
     }
   }
-
   debouncedSearch = debounce(async (query) => {
     try {
+      this.setState({ loading: true }, () => {
+        console.log(this.state.loading)
+      })
       const movies = await this.movieService.getResource(query).then((data) => {
         return data.results
       })
       const totalResult = await this.movieService.getResource(query).then((data) => {
         return data.total_results
       })
-      this.setState({ movies, totalResult, query }, () => {})
+      this.setState({ movies, totalResult, query, loading: false }, () => {
+        console.log(this.state.loading)
+      })
     } catch (error) {
       console.error(error)
     }
   }, 1000)
 
   searchRatedMovies = async () => {
+    // console.log('перелист')
     try {
       this.setState({ loading: true })
       const moviesRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
+        console.log(data)
         return data.results
       })
+      console.log(moviesRated)
       const totalResultRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
         return data.total_results
       })
@@ -79,11 +99,9 @@ class App extends Component {
       console.error(error)
     }
   }
-
   handleSearch = (value) => {
     this.debouncedSearch(value)
   }
-
   async componentDidMount() {
     try {
       const genres = await themovieDbService.getGenres()
@@ -101,12 +119,16 @@ class App extends Component {
 
   handleRatingChange = async (id, value) => {
     try {
-      this.setState({ loading: true })
+      // this.setState({ loading: true })
       await this.movieService.postRating(id, value, this.state.guestSessionId)
-      await this.searchRatedMovies()
-      this.setState({ loading: false })
+      // await this.searchRatedMovies()
+      let newRatedMovie = { ...this.state.moviesRatedLocal, [id]: value }
+      this.setState({ moviesRatedLocal: newRatedMovie }, () => {
+        console.log(this.state.moviesRatedLocal)
+      })
+      // this.setState({ loading: false })
     } catch (error) {
-      this.setState({ loading: false })
+      // this.setState({ loading: false })
       console.error(error)
     }
   }
@@ -132,35 +154,24 @@ class App extends Component {
                           hasFeedback
                           name="field_b"
                           validateDebounce={1000}
-                          onChange={(e) => {
-                            this.handleSearch(e.target.value)
-                          }}
-                          rules={[
-                            {
-                              min: 3,
-                            },
-                          ]}
+                          onChange={(e) => this.handleSearch(e.target.value)}
                         >
                           <Input placeholder="Type to search ..." />
                         </Form.Item>
                       </Form>
-                      {this.state.loading && (
-                        <Space className="spinner__space-container">
-                          <Spin
-                            indicator={<LoadingOutlined className="spinner__loadingOutLined" spin />}
-                            size="large"
-                          />
-                        </Space>
-                      )}
                       <MovieList
                         movies={this.state.movies}
-                        moviesRated={this.state.moviesRated}
+                        // moviesRated={this.state.moviesRated}
                         totalResult={this.state.totalResult}
+                        moviesRatedLocal={this.state.moviesRatedLocal}
                         query={this.state.query}
                         handlePageChange={this.handlePageChange}
                         handleRatingChange={this.handleRatingChange}
                         searchRatedMovies={this.searchRatedMovies}
                         className="movie-list"
+                        loading={this.state.loading}
+                        currentPage={this.state.currentPage}
+                        currentTabisMain={this.state.currentTabisMain}
                       />
                     </Fragment>
                   ),
@@ -176,11 +187,17 @@ class App extends Component {
                       handlePageChange={this.handleRatedPageChange}
                       handleRatingChange={this.handleRatingChange}
                       searchRatedMovies={this.searchRatedMovies}
+                      loading={this.state.loading}
+                      currentPage={this.state.currentPage}
+                      currentTabisMain={this.state.currentTabisMain}
                     />
                   ),
                 },
               ]}
-              onChange={this.searchRatedMovies}
+              onChange={() => {
+                this.searchRatedMovies()
+                this.currentTabToggle()
+              }}
               centered
             />
           </MovieContext.Provider>

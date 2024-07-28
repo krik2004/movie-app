@@ -1,44 +1,57 @@
-  import React, { Component } from 'react'
-  import PropTypes from 'prop-types'
-  import { List } from 'antd'
-  import MovieCard from '../movie-card/movie-card'
-  import './movie-list.css'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { List, Space, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 
-  export default class MovieList extends Component {
-    handlePageChange = (page) => {
-      this.props.handlePageChange(page)
-    }
-    render() {
-      const {
-        movies,
-        totalResult,
-        handleRatingChange,
-        searchRatedMovies,
-        moviesRated,
-      } = this.props
-      return (
-        <div className="move-list__container">
+import './movie-list.css'
+import MovieCard from '../movie-card/movie-card'
+
+export default class MovieList extends Component {
+  handlePageChange = (page) => {
+    this.props.handlePageChange(page)
+  }
+  render() {
+    const {
+      movies,
+      totalResult,
+      handleRatingChange,
+      searchRatedMovies,
+      moviesRated,
+      moviesRatedLocal,
+      loading,
+      currentPage,
+      currentTabisMain,
+    } = this.props
+    return (
+      <div className="move-list__container">
+        {loading ? (
+          <Space className="spinner__space-container">
+            <Spin indicator={<LoadingOutlined className="spinner__loadingOutLined" spin />} size="large" />
+          </Space>
+        ) : (
           <List
             className="move-list"
             size="small"
             pagination={{
               showSizeChanger: false,
-              onChange: (page) => {
-                this.handlePageChange(page)
-              },
+              onChange: (page) => this.handlePageChange(page),
               pageSize: 20,
               position: 'bottom',
               align: 'center',
               total: totalResult,
+              current: currentPage,
             }}
             dataSource={movies}
             renderItem={(item) => (
               <List.Item>
                 <MovieCard
+                  movieRatedLocal={moviesRatedLocal[item.id]}
+                  key={item.id}
                   item={item}
                   handleRatingChange={handleRatingChange}
                   moviesRated={moviesRated}
                   searchRatedMovies={searchRatedMovies}
+                  currentTabisMain={currentTabisMain}
                 />
               </List.Item>
             )}
@@ -52,17 +65,22 @@
               xxl: 2,
             }}
           />
-        </div>
-      )
-    }
+        )}
+      </div>
+    )
   }
-  MovieList.propTypes = {
-    movies: PropTypes.array,
-    totalResult: PropTypes.number.isRequired,
-    query: PropTypes.string,
-    handlePageChange: PropTypes.func,
-    handleRatingChange: PropTypes.func,
-    searchRatedMovies: PropTypes.func,
-    moviesRated: PropTypes.array,
-    handleRatedPageChange: PropTypes.func,
-  }
+}
+MovieList.propTypes = {
+  movies: PropTypes.array,
+  totalResult: PropTypes.number,
+  query: PropTypes.string,
+  handlePageChange: PropTypes.func,
+  handleRatingChange: PropTypes.func,
+  searchRatedMovies: PropTypes.func,
+  moviesRated: PropTypes.array,
+  handleRatedPageChange: PropTypes.func,
+  moviesRatedLocal: PropTypes.object,
+  loading: PropTypes.bool,
+  currentPage: PropTypes.number,
+  currentTabisMain: PropTypes.bool,
+}
