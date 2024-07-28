@@ -40,8 +40,6 @@ export default class MovieCard extends Component {
     const { item, handleRatingChange, moviesRated, searchRatedMovies, movieRatedLocal, currentTabisMain } = this.props
     const { error } = this.state
     const posterURL = 'https://image.tmdb.org/t/p/w500/'
-    // console.log('moviesRated', moviesRated)
-    // console.log(moviesRated)
     let currentUserRating
     if (currentTabisMain) {
       currentUserRating = movieRatedLocal
@@ -50,11 +48,9 @@ export default class MovieCard extends Component {
         const foundMovie = moviesRated.find((ratedMovie) => ratedMovie.id === item.id)
         if (foundMovie) {
           currentUserRating = foundMovie.rating
-          // console.log('rating совпал: ', currentUserRating)
         }
       }
     }
-    // console.log('для фильма: ', item.id)}
     return (
       <MovieContext.Consumer>
         {({ genres }) => (

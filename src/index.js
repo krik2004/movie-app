@@ -25,31 +25,62 @@ class App extends Component {
     genres: [],
     moviesRatedLocal: {},
     currentPage: 1,
+    currentPageRateTab: 1,
     currentTabisMain: true,
   }
+
+  searchRatedMovies = async (page) => {
+    try {
+      this.setState({ loading: true })
+      const moviesRated = await this.movieService.getRatedMovies(page, this.state.guestSessionId).then((data) => {
+        return data.results
+      })
+      const totalResultRated = await this.movieService.getRatedMovies(page, this.state.guestSessionId).then((data) => {
+        return data.total_results
+      })
+      this.setState({ loading: false, moviesRated, totalResultRated }, () => {
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   currentTabToggle = () => {
     this.setState((prevState) => ({ currentTabisMain: !prevState.currentTabisMain }))
   }
 
   handlePageChange = async (page) => {
-    this.setState({ currentPage: page })
-    try {
-      this.setState({ loading: true }, () => {
-        console.log(this.state.loading)
+    if (this.state.currentTabisMain) {
+      this.setState({ currentPage: page }, () => {
       })
-      const query = this.state.query
-      const movies = await this.movieService.getResource(query, page).then((data) => {
-        return data.results
-      })
-      this.setState({ movies, loading: false }, () => {
-        console.log('новые фильмы пришли')
-        console.log(this.state.loading)
-      })
-    } catch (error) {
-      this.setState({ loading: false })
-      console.error(error)
+      try {
+        this.setState({ loading: true }, () => {
+        })
+        const query = this.state.query
+        const movies = await this.movieService.getResource(query, page).then((data) => {
+          return data.results
+        })
+        this.setState({ movies, loading: false }, () => {})
+      } catch (error) {
+        this.setState({ loading: false })
+        console.error(error)
+      }
+    } else {
+      this.setState({ currentPageRateTab: page })
+      try {
+        this.setState({ loading: true })
+        const query = this.state.query
+        const movies = await this.searchRatedMovies(page).then((data) => {
+          return data.results
+        })
+        this.setState({ movies, loading: false }, () => {})
+      } catch (error) {
+        this.setState({ loading: false })
+        console.error(error)
+      }
     }
   }
+
   handleRatedPageChange = async (page) => {
     const { guestSessionId } = this.state
     try {
@@ -65,43 +96,33 @@ class App extends Component {
   }
   debouncedSearch = debounce(async (query) => {
     try {
-      this.setState({ loading: true }, () => {
-        console.log(this.state.loading)
-      })
+      this.setState({ loading: true })
       const movies = await this.movieService.getResource(query).then((data) => {
         return data.results
       })
       const totalResult = await this.movieService.getResource(query).then((data) => {
         return data.total_results
       })
-      this.setState({ movies, totalResult, query, loading: false }, () => {
-        console.log(this.state.loading)
-      })
+      this.setState({ movies, totalResult, query, loading: false })
     } catch (error) {
       console.error(error)
     }
   }, 1000)
 
-  searchRatedMovies = async () => {
-    // console.log('перелист')
+  handleSearch = (value) => {
+    this.debouncedSearch(value)
+  }
+
+  handleRatingChange = async (id, value) => {
     try {
-      this.setState({ loading: true })
-      const moviesRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
-        console.log(data)
-        return data.results
-      })
-      console.log(moviesRated)
-      const totalResultRated = await this.movieService.getRatedMovies(1, this.state.guestSessionId).then((data) => {
-        return data.total_results
-      })
-      this.setState({ loading: false, moviesRated, totalResultRated }, () => {})
+      await this.movieService.postRating(id, value, this.state.guestSessionId)
+      let newRatedMovie = { ...this.state.moviesRatedLocal, [id]: value }
+      this.setState({ moviesRatedLocal: newRatedMovie }, () => {})
     } catch (error) {
       console.error(error)
     }
   }
-  handleSearch = (value) => {
-    this.debouncedSearch(value)
-  }
+
   async componentDidMount() {
     try {
       const genres = await themovieDbService.getGenres()
@@ -117,21 +138,6 @@ class App extends Component {
     }
   }
 
-  handleRatingChange = async (id, value) => {
-    try {
-      // this.setState({ loading: true })
-      await this.movieService.postRating(id, value, this.state.guestSessionId)
-      // await this.searchRatedMovies()
-      let newRatedMovie = { ...this.state.moviesRatedLocal, [id]: value }
-      this.setState({ moviesRatedLocal: newRatedMovie }, () => {
-        console.log(this.state.moviesRatedLocal)
-      })
-      // this.setState({ loading: false })
-    } catch (error) {
-      // this.setState({ loading: false })
-      console.error(error)
-    }
-  }
   render() {
     return (
       <div>
@@ -161,7 +167,7 @@ class App extends Component {
                       </Form>
                       <MovieList
                         movies={this.state.movies}
-                        // moviesRated={this.state.moviesRated}
+                        moviesRated={this.state.moviesRated}
                         totalResult={this.state.totalResult}
                         moviesRatedLocal={this.state.moviesRatedLocal}
                         query={this.state.query}
@@ -181,15 +187,17 @@ class App extends Component {
                   label: 'Rated',
                   children: (
                     <MovieList
+                      moviesRatedLocal={this.state.moviesRatedLocal}
                       movies={this.state.moviesRated}
                       moviesRated={this.state.moviesRated}
                       totalResult={this.state.totalResultRated}
-                      handlePageChange={this.handleRatedPageChange}
+                      handlePageChange={this.handlePageChange}
                       handleRatingChange={this.handleRatingChange}
                       searchRatedMovies={this.searchRatedMovies}
                       loading={this.state.loading}
                       currentPage={this.state.currentPage}
                       currentTabisMain={this.state.currentTabisMain}
+                      currentPageRateTab={this.state.currentPageRateTab}
                     />
                   ),
                 },

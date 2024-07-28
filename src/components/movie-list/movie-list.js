@@ -21,7 +21,14 @@ export default class MovieList extends Component {
       loading,
       currentPage,
       currentTabisMain,
+      currentPageRateTab,
     } = this.props
+    let currentListPage
+    if (currentTabisMain) {
+      currentListPage = currentPage
+    } else {
+      currentListPage = currentPageRateTab
+    }
     return (
       <div className="move-list__container">
         {loading ? (
@@ -39,7 +46,7 @@ export default class MovieList extends Component {
               position: 'bottom',
               align: 'center',
               total: totalResult,
-              current: currentPage,
+              current: currentListPage,
             }}
             dataSource={movies}
             renderItem={(item) => (
@@ -82,5 +89,6 @@ MovieList.propTypes = {
   moviesRatedLocal: PropTypes.object,
   loading: PropTypes.bool,
   currentPage: PropTypes.number,
+  currentPageRateTab: PropTypes.number,
   currentTabisMain: PropTypes.bool,
 }
